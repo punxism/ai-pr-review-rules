@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "domain": "reliability",
+  "priority": "high",
+  "rules": [
+    {
+      "id": "retry.idempotent",
+      "severity": "MAJOR",
+      "title": "Retry only idempotent operations",
+      "description": "Retries must only be applied to idempotent APIs with backoff.",
+      "applies_to": ["infra"],
+      "rationale": "Unsafe retries may cause duplicated side effects."
+    },
+    {
+      "id": "fallback.required",
+      "severity": "MINOR",
+      "title": "Graceful fallback required",
+      "description": "External call failures should be handled gracefully.",
+      "applies_to": ["service"],
+      "rationale": "Uncaught failures propagate to users."
+    }
+  ]
+}

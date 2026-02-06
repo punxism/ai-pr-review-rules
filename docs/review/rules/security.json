@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "domain": "security",
+  "priority": "critical",
+  "rules": [
+    {
+      "id": "sec.auth.required",
+      "severity": "BLOCKER",
+      "title": "Authentication required",
+      "description": "All APIs must validate authentication and authorization.",
+      "applies_to": ["api"],
+      "rationale": "Unauthenticated access is a critical vulnerability."
+    },
+    {
+      "id": "sec.secret.exposure",
+      "severity": "BLOCKER",
+      "title": "No secret exposure",
+      "description": "Secrets must not appear in source code, logs, or error messages.",
+      "applies_to": ["all"],
+      "rationale": "Exposed secrets compromise system security."
+    }
+  ]
+}

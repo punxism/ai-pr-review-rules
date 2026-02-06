@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "domain": "persistence",
+  "priority": "high",
+  "rules": [
+    {
+      "id": "tx.boundary",
+      "severity": "MAJOR",
+      "title": "Explicit transaction boundary",
+      "description": "@Transactional should be defined at the service/application layer.",
+      "applies_to": ["service"],
+      "rationale": "Incorrect transaction scope may cause partial commits."
+    },
+    {
+      "id": "db.n_plus_one",
+      "severity": "MAJOR",
+      "title": "Avoid N+1 queries",
+      "description": "Do not execute database queries inside loops.",
+      "applies_to": ["repository"],
+      "rationale": "N+1 queries cause severe performance degradation."
+    }
+  ]
+}

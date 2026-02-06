@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "domain": "testing",
+  "priority": "medium",
+  "rules": [
+    {
+      "id": "test.domain.unit",
+      "severity": "MAJOR",
+      "title": "Domain unit tests required",
+      "description": "Core domain logic must have unit tests without Spring context.",
+      "applies_to": ["domain"],
+      "rationale": "Pure domain logic should be tested in isolation."
+    },
+    {
+      "id": "test.integration.critical",
+      "severity": "MINOR",
+      "title": "Integration tests for critical flows",
+      "description": "Critical API flows must be covered by integration tests.",
+      "applies_to": ["api"],
+      "rationale": "Integration tests prevent regressions."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "domain": "architecture",
+  "priority": "high",
+  "rules": [
+    {
+      "id": "arch.layer.violation",
+      "severity": "BLOCKER",
+      "title": "Prevent layer violation",
+      "description": "Controllers must not directly access repositories.",
+      "applies_to": ["api"],
+      "rationale": "Direct access bypasses domain logic and breaks encapsulation."
+    },
+    {
+      "id": "arch.entity.leak",
+      "severity": "MAJOR",
+      "title": "Do not expose JPA entities",
+      "description": "JPA entities must not be returned in API responses.",
+      "applies_to": ["api", "infra"],
+      "rationale": "Entity exposure tightly couples API and persistence layers."
+    }
+  ]
+}

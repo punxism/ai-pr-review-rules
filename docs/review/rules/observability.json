@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "domain": "observability",
+  "priority": "medium",
+  "rules": [
+    {
+      "id": "obs.structured.log",
+      "severity": "MINOR",
+      "title": "Use structured logging",
+      "description": "Logs should include requestId or traceId using MDC.",
+      "applies_to": ["all"],
+      "rationale": "Structured logs improve debuggability."
+    },
+    {
+      "id": "obs.metrics.basic",
+      "severity": "MINOR",
+      "title": "Expose basic metrics",
+      "description": "Expose latency and error rate metrics for key flows.",
+      "applies_to": ["service"],
+      "rationale": "Metrics are essential for monitoring and alerting."
+    }
+  ]
+}

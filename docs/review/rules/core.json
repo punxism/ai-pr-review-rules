@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "domain": "core",
+  "priority": "critical",
+  "rules": [
+    {
+      "id": "arch.domain.pure",
+      "severity": "BLOCKER",
+      "title": "Keep domain module pure",
+      "description": "Domain module must not depend on Spring, JPA, Web, or infrastructure packages.",
+      "applies_to": ["domain"],
+      "rationale": "Framework coupling reduces testability and flexibility."
+    },
+    {
+      "id": "log.no_pii",
+      "severity": "MAJOR",
+      "title": "Do not log PII",
+      "description": "Never log phone numbers, emails, addresses, tokens, or authorization headers.",
+      "applies_to": ["all"],
+      "rationale": "PII leakage creates security and compliance risks."
+    },
+    {
+      "id": "ext.timeout.required",
+      "severity": "BLOCKER",
+      "title": "External calls must define timeouts",
+      "description": "All outbound HTTP/GRPC calls must explicitly configure timeouts.",
+      "applies_to": ["infra"],
+      "rationale": "Missing timeouts can exhaust threads and resources."
+    }
+  ]
+}
