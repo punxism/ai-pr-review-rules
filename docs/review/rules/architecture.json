@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "domain": "architecture",
   "priority": "high",
   "rules": [
@@ -7,7 +7,7 @@
       "id": "arch.layer.violation",
       "severity": "BLOCKER",
       "title": "Prevent layer violation",
-      "description": "Controllers must not directly access repositories.",
+      "description": "Controllers must not directly access repositories. Controllers orchestrate only; use application/service layer.",
       "applies_to": ["api"],
       "rationale": "Direct access bypasses domain logic and breaks encapsulation."
     },
@@ -15,9 +15,62 @@
       "id": "arch.entity.leak",
       "severity": "MAJOR",
       "title": "Do not expose JPA entities",
-      "description": "JPA entities must not be returned in API responses.",
+      "description": "JPA entities must not be returned in API responses and must not be used as domain objects. Always map entity <-> domain/DTO.",
+      "applies_to": ["api", "infra", "domain"],
+      "rationale": "Entity exposure tightly couples API/domain to persistence and causes lazy-loading/transaction boundary issues."
+    },
+    {
+      "id": "arch.nullable.prefer_empty_object",
+      "severity": "MAJOR",
+      "title": "Avoid nullable fields when empty state is possible",
+      "description": "Avoid using nullable types (T?) when an empty or default state can be modeled explicitly. Prefer emptyList(), emptySet(), emptyMap(), Optional-like wrappers, or dedicated Empty/None objects. Define and document empty/initial states instead of relying on null.",
+      "applies_to": ["api", "domain", "infra"],
+      "rationale": "Overuse of null increases defensive code, hides invariants, and causes runtime errors. Explicit empty states improve readability, safety, and domain modeling."
+    },
+    {
+      "id": "arch.naming.no_generic",
+      "severity": "MAJOR",
+      "title": "Avoid generic names like Impl/Utils/Helper/Tool/Common/General",
+      "description": "Do not use generic class/package names such as *Impl, *Utils, *Helper, *Tool, Common*, General*. Use intention-revealing names that reflect responsibility and role (e.g., XxxService, XxxClient, XxxMapper, XxxPolicy).",
+      "applies_to": ["api", "domain", "infra"],
+      "rationale": "Generic names hide responsibilities, increase coupling, and make architecture drift harder to detect."
+    },
+    {
+      "id": "arch.hexagonal.boundaries",
+      "severity": "MAJOR",
+      "title": "Prefer Hexagonal Architecture boundaries",
+      "description": "Domain/application must define ports (interfaces) for outbound dependencies; infra implements adapters. API calls application services/use-cases; domain must not call infra directly.",
+      "applies_to": ["api", "domain", "infra"],
+      "rationale": "Ports/adapters isolate domain logic from IO concerns and make changes safer."
+    },
+    {
+      "id": "arch.function.max_30_lines",
+      "severity": "MAJOR",
+      "title": "Refactor long functions over 30 lines",
+      "description": "If a function exceeds 30 lines, refactor it to be more declarative and split into smaller functions with clear responsibilities. Prefer extracting pure functions and reducing nested control flow.",
+      "applies_to": ["api", "domain", "infra"],
+      "rationale": "Long functions increase cognitive load, hide side effects, and are harder to test and review. Keeping functions under 30 lines improves readability, testability, and maintainability.",
+      "examples": {
+        "imperative_bad": "fun process(o: Order) { if (o.status == NEW) { if (o.price > 1000) { applyDiscount(o) } if (o.user.isVip) { applyVip(o) } save(o) } }",
+        "declarative_good": "fun process(o: Order) = o.takeIf { it.isNew() }?.let { it.applyPricing().applyBenefits().save() }",
+        "split_functions": "fun process(o: Order) { validate(o); val priced = applyPricing(o); val final = applyBenefits(priced); save(final) }"
+      }
+    },
+    {
+      "id": "arch.bean.max_dependencies_4",
+      "severity": "MAJOR",
+      "title": "Split beans with too many service/repository dependencies",
+      "description": "If a Spring bean (e.g., @Service/@Component/@Controller) depends on 4 or more distinct services and/or repositories (constructor-injected), review whether responsibilities can be split. Prefer extracting cohesive collaborators (e.g., XxxUseCase, XxxPolicy, XxxFacade, XxxCoordinator) and grouping related persistence behind a port.",
       "applies_to": ["api", "infra"],
-      "rationale": "Entity exposure tightly couples API and persistence layers."
+      "rationale": "Beans with many dependencies often violate single-responsibility, become hard to test, and signal missing boundaries. Splitting responsibilities improves cohesion, testability, and architectural clarity."
+    },
+    {
+      "id": "arch.no_circular_dependencies",
+      "severity": "BLOCKER",
+      "title": "No circular dependencies",
+      "description": "Circular dependencies are forbidden at both module/package and bean levels. Prevent cycles between modules (api/domain/infra), packages, and Spring beans. If a cycle is detected, break it by introducing a port/interface, moving abstractions to domain/application, or restructuring responsibilities.",
+      "applies_to": ["api", "domain", "infra"],
+      "rationale": "Dependency cycles increase coupling, make changes risky, complicate testing, and can cause Spring bean initialization failures. Acyclic dependencies are a core requirement for clean/hexagonal architecture."
     }
   ]
 }

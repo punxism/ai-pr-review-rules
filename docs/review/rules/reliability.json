@@ -12,6 +12,30 @@
       "rationale": "Unsafe retries may cause duplicated side effects."
     },
     {
+      "id": "reactive.no_blocking_in_webflux",
+      "severity": "BLOCKER",
+      "title": "No blocking calls in WebFlux/reactive flows",
+      "description": "When using Spring WebFlux (reactor), do not perform blocking operations on event-loop threads (e.g., Thread.sleep, blocking I/O, JDBC, RestTemplate, OkHttp execute(), blocking file/network calls). For external calls, use non-blocking clients (WebClient/reactive drivers) and ensure timeouts are configured. If blocking is unavoidable, isolate it using boundedElastic()/Schedulers.boundedElastic or a dedicated scheduler and document the reason.",
+      "applies_to": ["api", "infra"],
+      "rationale": "Blocking in reactive pipelines can stall event-loop threads, causing throughput collapse and timeouts under load. Enforcing non-blocking I/O and isolating unavoidable blocking preserves responsiveness."
+    },
+    {
+      "id": "conn.pool.required",
+      "severity": "MAJOR",
+      "title": "Use and configure connection pools for external resources",
+      "description": "All outbound connections (HTTP clients, DB drivers, Redis, message brokers, etc.) must use properly configured connection pools. Avoid creating per-request connections. Configure max connections, timeouts, and idle eviction based on expected load.",
+      "applies_to": ["api", "infra"],
+      "rationale": "Missing or misconfigured connection pools cause resource exhaustion, increased latency, and cascading failures under traffic spikes."
+    },
+    {
+      "id": "consumer.backpressure.and.parallelism",
+      "severity": "MAJOR",
+      "title": "Ensure proper backpressure and controlled parallelism in consumers",
+      "description": "Message consumers (Kafka/RabbitMQ/SQS/etc.) must not fetch/process excessive messages without backpressure. Configure max poll/batch size, concurrency/partition assignment, and in-flight limits. Ensure processing is parallelized appropriately (e.g., bounded thread pools, reactive parallelism) and avoid unbounded queues.",
+      "applies_to": ["infra", "service"],
+      "rationale": "Unbounded consumption can trigger resource exhaustion, massive spikes in downstream load, and cascading failures. Proper backpressure and bounded parallelism preserve system stability."
+    },
+    {
       "id": "fallback.required",
       "severity": "MINOR",
       "title": "Graceful fallback required",

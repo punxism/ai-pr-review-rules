@@ -18,6 +18,14 @@
       "description": "Do not execute database queries inside loops.",
       "applies_to": ["repository"],
       "rationale": "N+1 queries cause severe performance degradation."
+    },
+    {
+      "id": "db.update.no_read_modify_write",
+      "severity": "MAJOR",
+      "title": "Avoid read-modify-write full entity updates (default: pessimistic lock)",
+      "description": "Avoid patterns that read an entire entity/aggregate, modify it in memory, and overwrite it (read-modify-write) when concurrent updates are possible. Prefer partial/patch updates (UPDATE ... SET ... WHERE ...) and, by default, use pessimistic locking (SELECT ... FOR UPDATE) to prevent lost updates. Optimistic locking (@Version) may be used only when contention is low and retries are well-handled.",
+      "applies_to": ["repository", "infra"],
+      "rationale": "Full-object read-modify-write updates can cause lost updates and race conditions. Using partial updates and pessimistic locking by default preserves correctness under contention."
     }
   ]
 }
